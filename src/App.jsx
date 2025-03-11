@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function randomPass(uppercase, lowercase, numbers, characters, length) {
   let options = {
@@ -11,6 +12,7 @@ function randomPass(uppercase, lowercase, numbers, characters, length) {
   let charset = ''
   let password = ''
 
+  // Add at least one character from each selected option
   if (uppercase) {
     charset += options.uppercase
     password += options.uppercase[Math.floor(Math.random() * 26)]
@@ -28,10 +30,12 @@ function randomPass(uppercase, lowercase, numbers, characters, length) {
     password += options.characters[Math.floor(Math.random() * 26)]
   }
 
+  // Add random characters from selected options
   for (let i = password.length; i < length; i++) {
     password += charset.charAt(Math.floor(Math.random() * charset.length))
   }
 
+  // Shuffle the password
   password =
     password
       .split("")
@@ -53,21 +57,25 @@ function App() {
   })
   const [password, setPassword] = useState('')
 
+  // Generate password on initial render
   useEffect(() => {
     handleGenerate(len)
   }, [])
 
+  // Update range background and generate password on length change
   useEffect(() => {
     updateRangeBackground(len);
     handleGenerate()
   }, [len, options]);
 
+  // Update range background for slider on input
   const updateRangeBackground = (value) => {
     const range = document.querySelector('.slider');
     const percentage = ((value - 8) / (32 - 8)) * 100;
     range.style.setProperty('--value', `${percentage}%`);
   }
 
+  // Handle checkbox select
   const handleSelect = (e) => {
     let { name, checked } = e.target
 
@@ -78,11 +86,13 @@ function App() {
     })
   }
 
+  // Handle length input
   const handleLength = (e) => {
     let {value} = e.target
     setLen((value < 8) ? 8 : (value > 32) ? 32 : value)
   }
 
+  // Generate password depending on options and length
   const handleGenerate = (length) => {
     setPassword(
       randomPass(
@@ -101,6 +111,12 @@ function App() {
           <h1>Random Password Generator</h1>
           <div className='password-container'>
             <input type="text" className='password' name="password" id="password" value={password} disabled />
+            <button type='button' className='copy-btn' onClick={() => navigator.clipboard.writeText(password)}>
+              <i className="fa-regular fa-copy"></i>
+            </button>
+            <button type='button' className='generate-btn' onClick={() => handleGenerate()}>
+              <i className="fa-solid fa-arrows-rotate"></i>
+            </button>
           </div>
           <div className='password-length-container'>
             <div className='password-length'>
@@ -132,9 +148,6 @@ function App() {
               <input type="checkbox" name="characters" id="characters" checked={options.characters} onChange={handleSelect} />
               <label htmlFor="characters">Characters</label>
             </div>
-          </div>
-          <div className='generate-container'>
-            <button type='button' className='generate-btn' onClick={() => handleGenerate()}>Generate</button>
           </div>
         </div>
       </div>

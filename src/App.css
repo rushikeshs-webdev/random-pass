@@ -13,16 +13,22 @@
 }
 
 .container {
-    padding: 10px;
+    padding: 40px;
     display: flex;
     flex-direction: column;
     gap: 30px;
+    border: 1px solid lightgray;
+    border-radius: 10px;
+}
+
+.password-container{
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .password {
-    width: 100%;
     padding: 10px;
-    border: 0.5px solid lightgray;
+    border: 0.8px solid lightgray;
     border-radius: 5px;
     font-size: 30px;
     background-color: white;
@@ -30,10 +36,25 @@
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
 }
 
+.copy-btn, .generate-btn {
+    padding: 10px;
+    background: none;
+    color: gray;
+    border: 0.5px solid lightgray;
+    border-radius: 5px;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.copy-btn:hover, .generate-btn:hover {
+    background-color: lightgray;
+    font-size: 28px;
+    color: black;
+}
+
 .options-container {
-    display: flex;
-    flex-direction: column;
-    align-items: start;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 15px;
 }
 
@@ -44,7 +65,12 @@
 }
 
 .option input {
+    width: 17px;
     accent-color: crimson;
+}
+
+.option input:hover {
+    width: 20px;
 }
 
 .generate-container,
@@ -52,16 +78,6 @@
     width: 100%;
     display: flex;
     justify-content: center;
-}
-
-.generate-btn {
-    margin-top: 30px;
-    width: 300px;
-    padding: 5px;
-    font-size: 30px;
-    background-color: crimson;
-    color: white;
-    border: none;
 }
 
 .password-length-container {
@@ -73,7 +89,7 @@
 .password-length input {
     width: 40px;
     padding: 10px;
-    border: 2px solid lightgray;
+    border: 1.5px solid lightgray;
     border-radius: 5px;
     font-size: 20px;
 }
@@ -101,4 +117,9 @@
     background: crimson;
     border-radius: 100%;
     cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb:hover {
+    width: 23px;
+    height: 23px;    
 }
