@@ -1,25 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function randomPass(uppercase, lowercase, numbers, characters, length) {
+  let options = {
+    uppercase: 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+    lowercase: 'abcdefghijklmnopqrstuvwxyz',
+    numbers: '0123456789',
+    characters: '!@#$%^&*()_+=-[]{};:?><,.|',
+  }
   let charset = ''
   let password = ''
 
   if (uppercase) {
-    charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    password += charset[Math.floor(Math.random() * 26)]
+    charset += options.uppercase
+    password += options.uppercase[Math.floor(Math.random() * 26)]
   }
   if (lowercase) {
-    charset += 'abcdefghijklmnopqrstuvwxyz'
-    password += charset[Math.floor(Math.random() * 26)]
+    charset += options.lowercase
+    password += options.lowercase[Math.floor(Math.random() * 26)]
   }
   if (numbers) {
-    charset += '0123456789'
-    password += charset[Math.floor(Math.random() * 10)]
+    charset += options.numbers
+    password += options.numbers[Math.floor(Math.random() * 10)]
   }
   if (characters) {
-    charset += '!@#$%^&*()_+=-[]{};:?><,.|'
-    password += charset[Math.floor(Math.random() * 26)]
+    charset += options.characters
+    password += options.characters[Math.floor(Math.random() * 26)]
   }
 
   for (let i = password.length; i < length; i++) {
@@ -38,21 +44,29 @@ function randomPass(uppercase, lowercase, numbers, characters, length) {
 }
 
 function App() {
+  const [len, setLen] = useState(8)
   const [options, setOptions] = useState({
-    Uppercase: true,
+    uppercase: true,
     lowercase: true,
-    Numbers: true,
-    Characters: true
+    numbers: true,
+    characters: true
   })
-  const [password, setPassword] = useState(
-    randomPass(
-      options.Uppercase,
-      options.lowercase,
-      options.Numbers,
-      options.Characters,
-      (length > 12 && length) || 12
-    ))
+  const [password, setPassword] = useState('')
 
+  useEffect(() => {
+    handleGenerate(len)
+  }, [])
+
+  useEffect(() => {
+    updateRangeBackground(len);
+    handleGenerate()
+  }, [len, options]);
+
+  const updateRangeBackground = (value) => {
+    const range = document.querySelector('.slider');
+    const percentage = ((value - 8) / (32 - 8)) * 100;
+    range.style.setProperty('--value', `${percentage}%`);
+  }
 
   const handleSelect = (e) => {
     let { name, checked } = e.target
@@ -64,17 +78,20 @@ function App() {
     })
   }
 
-  const handleGenerate = () => {
-    let length = 10;
-    let genratedPassword = randomPass(
-      options.Uppercase,
-      options.lowercase,
-      options.Numbers,
-      options.Characters,
-      (length > 12 && length) || 12
-    )
-    setPassword(genratedPassword)
-    console.log('generated Pass: ' + genratedPassword)
+  const handleLength = (e) => {
+    let {value} = e.target
+    setLen((value < 8) ? 8 : (value > 32) ? 32 : value)
+  }
+
+  const handleGenerate = (length) => {
+    setPassword(
+      randomPass(
+        options.uppercase,
+        options.lowercase,
+        options.numbers,
+        options.characters,
+        length || len
+      ))
   }
 
   return (
@@ -85,26 +102,39 @@ function App() {
           <div className='password-container'>
             <input type="text" className='password' name="password" id="password" value={password} disabled />
           </div>
+          <div className='password-length-container'>
+            <div className='password-length'>
+              <input type="number" className='length-input' value={len} onChange={handleLength} />
+            </div>
+            <div className="slider-container" >
+              <input
+                type='range'
+                min='8' max='32' value={`${len}`}
+                onInput={handleLength}
+                className="slider"
+              />
+            </div>
+          </div>
           <div className='options-container'>
             <div className='option'>
-              <input type="checkbox" name="Uppercase" id="Uppercase" checked={options.Uppercase} onChange={handleSelect} />
-              <label htmlFor="Uppercase">Uppercase</label>
+              <input type="checkbox" name="uppercase" id="uppercase" checked={options.uppercase} onChange={handleSelect} />
+              <label htmlFor="uppercase">Uppercase</label>
             </div>
             <div className='option'>
               <input type="checkbox" name="lowercase" id="lowercase" checked={options.lowercase} onChange={handleSelect} />
-              <label htmlFor="lowercase">lowercase</label>
+              <label htmlFor="lowercase">Lowercase</label>
             </div>
             <div className='option'>
-              <input type="checkbox" name="Numbers" id="Numbers" checked={options.Numbers} onChange={handleSelect} />
-              <label htmlFor="Numbers">Numbers</label>
+              <input type="checkbox" name="numbers" id="numbers" checked={options.numbers} onChange={handleSelect} />
+              <label htmlFor="numbers">Numbers</label>
             </div>
             <div className='option'>
-              <input type="checkbox" name="Characters" id="Characters" checked={options.Characters} onChange={handleSelect} />
-              <label htmlFor="Characters">Characters</label>
+              <input type="checkbox" name="characters" id="characters" checked={options.characters} onChange={handleSelect} />
+              <label htmlFor="characters">Characters</label>
             </div>
           </div>
           <div className='generate-container'>
-            <button type='button' className='generate-btn' onClick={(e) => handleGenerate(e)}>Generate</button>
+            <button type='button' className='generate-btn' onClick={() => handleGenerate()}>Generate</button>
           </div>
         </div>
       </div>
